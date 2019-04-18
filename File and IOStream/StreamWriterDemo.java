@@ -15,7 +15,7 @@ import java.io.OutputStreamWriter;
  * */
 public class StreamWriterDemo {
 	/**
-	 * OutputStreanWriter-->Writer是一个字符流
+	 * OutputStreamWriter-->Writer是一个字符流
 	 * 		是字符流通向字节流的桥梁，可以使用指定的charset将要写入流中的字符编码成字节。(内存-->硬盘)
 	 * 构造方法：
 	 * 		OutputStreamWriter(OutputStream out) 
