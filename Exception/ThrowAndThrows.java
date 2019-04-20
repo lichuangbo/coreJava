@@ -1,7 +1,7 @@
 /**
  * CopyRight © 2019All rights reserved.
  * 
- * @date: 2019年4月19日
+ * @date: 2019年4月20日
  */
 package cn.edu.tit.corejava.exception;
 
@@ -11,9 +11,10 @@ import java.util.Objects;
 
 /**
  * @author 李创博
- * @version: 1.0
+ * @version: 1.1
  */
-public class ThrowDemo {
+public class ThrowAndThrows {
+	
 	/**
 	 * throw关键字
 	 *     $可以在指定的方法中抛出单个异常对象，由方法体内的语句执行
