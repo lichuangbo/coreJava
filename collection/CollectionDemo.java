@@ -21,6 +21,11 @@ public class CollectionDemo {
 	 * @return: void
 	 */
 	public static void main(String[] args) {
+		/**	
+		 * Collection是集合层次的根接口，其下有常见的set,list,sorkedlist接口；	
+		 * 它定义了所有单列集合中共性的方法	
+		 * 它没有带索引的方法，故不能使用普通的for循环。	
+		 */
 		//使用多态创建集合，ArrayList可以改变
 		Collection<String> coll = new ArrayList<>();
 		
