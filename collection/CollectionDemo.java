@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+
 /**
  * @author 李创博
  * @version: 1.0
@@ -20,11 +21,6 @@ public class CollectionDemo {
 	 * @return: void
 	 */
 	public static void main(String[] args) {
-		/**
-		 * Collection是集合层次的根接口，其下有常见的set,list,sorkedlist接口；
-		 * 它定义了所有单列集合中共性的方法
-		 * 它没有带索引的方法，故不能使用普通的for循环。
-		 */
 		//使用多态创建集合，ArrayList可以改变
 		Collection<String> coll = new ArrayList<>();
 		
@@ -52,6 +48,7 @@ public class CollectionDemo {
 			System.out.println(s);
 		}
 		
+
 		/**
 		 * public boolean remove(E e):把指定对象在集合中删除
 		 * 指定元素存在，删除成功返回true；
