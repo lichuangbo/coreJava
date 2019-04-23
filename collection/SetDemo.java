@@ -18,18 +18,18 @@ public class SetDemo {
 	public static void main(String[] args) {
 //		showHashSet();
 		
-		HashSet<Student> set = new HashSet<>();
-		Student s1 = new Student("小明", 22);
-		Student s2 = new Student("小张", 22);
-		Student s3 = new Student("小张", 22);
-		set.add(s1);
-		set.add(s2);
-		set.add(s3);
-		for (Student student : set) {
+		HashSet<Person> set = new HashSet<>();
+		Person p1 = new Person("小明", 22);
+		Person p2 = new Person("小张", 22);
+		Person p3 = new Person("小张", 22);
+		set.add(p1);
+		set.add(p2);
+		set.add(p3);
+		for (Person student : set) {
 			System.out.println(student.getName() + student.getAge());
 		}
 		
-		showLinkedHashSet();
+//		showLinkedHashSet();
 	}
 	
 	public static void showSet() {
@@ -47,6 +47,7 @@ public class SetDemo {
 		 *    		返回false，说明是哈希冲突可以添加
 		 */
 	}
+	
 	public static void showHashSet() {
 		/**
 		 * HashSet类特点：implements Set
@@ -88,82 +89,5 @@ public class SetDemo {
 		set.add("b");
 		set.add("a");
 		System.out.println(set);
-	}
-}
-class Student {
-	/**
-	 * 使用HashSet存储自定义类型
-	 * 必须重写HashCode和equals方法
-	 */
-	private String name;
-	private int age;
-	public Student() {
-		
-	}
-	/* 
-	 * @return
-	 * @see java.lang.Object#hashCode()
-	 */
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + age;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		return result;
-	}
-	/* 
-	 * @param obj
-	 * @return
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Student other = (Student) obj;
-		if (age != other.age)
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		return true;
-	}
-	public Student(String name, int age) {
-		this.name = name;
-		this.age = age;
-	}
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	/**
-	 * @return the age
-	 */
-	public int getAge() {
-		return age;
-	}
-	/**
-	 * @param age the age to set
-	 */
-	public void setAge(int age) {
-		this.age = age;
 	}
 }
