@@ -6,6 +6,7 @@
 package cn.edu.tit.corejava.collection;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,11 +17,11 @@ import java.util.List;
 public class ListDemo {
 	
 	public static void main(String[] args) {
-//		showList();
+		showList();
 		
 //		showLinkedList();
 
-		showArrayList();
+//		showArrayList();
 	}
 	
 	public static void showList() {
@@ -33,12 +34,14 @@ public class ListDemo {
 		 * 	void add(int index, E element) 将指定的元素插入此列表中的指定位置 
 		 * 	E get(int index)  返回此列表中指定位置的元素
 		 * 	E remove(int index)  删除该列表中指定位置的元素
+		 *  boolean remove(Object o)  从列表中删除第一个出现的指定元素（如果存在
 		 * 	E set(int index, E element)  用指定的元素替换此列表中指定位置的元素
 		 * 注意：
 		 * 	操作索引时，防止索引越界异常
 		 * ArrayList底层是可变长数组，导致查询快，增删慢
 		 */
 		List<String> list = new ArrayList<>();
+		System.out.println("list初始大小：" + list.size());
 		list.add("a");
 		list.add("b");
 		list.add("e");
@@ -53,15 +56,32 @@ public class ListDemo {
 		System.out.println("替换的元素：" + list.set(3, "aaa"));
 		System.out.println(list);
 		
-		System.out.println("使用get方法遍历集合：");
+		System.out.println("\n使用get方法遍历集合：");
 		for (int i = 0; i < list.size(); i++) {
 			String str = list.get(i);
 			System.out.print(str + " ");
 		}
+		
 		System.out.println("\n使用增强for循环遍历集合：");
 		for (String str : list) {
 			System.out.print(str + " ");
 		}
+		
+		System.out.println("\n使用迭代器遍历：");
+		Iterator<String> it = list.iterator();
+		while(it.hasNext()) {
+			System.out.print(it.next() + " ");
+		}
+		
+		//toArray方式一
+		System.out.println();
+		String []arr = list.toArray(new String[0]);
+		System.out.println(arr);
+		
+		//toArray方式二
+		String []str1 = new String[list.size()];
+		list.toArray(str1);
+		System.out.println(str1);
 	}
 
 	public static void showLinkedList() {
