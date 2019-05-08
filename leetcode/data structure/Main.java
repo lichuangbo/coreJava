@@ -1,39 +1,45 @@
 /**
  * CopyRight © 2019All rights reserved.
  * 
- * @date: 2019年5月7日
+ * @date: 2019年5月8日
  */
 package cn.edu.tit.corejava.day02;
 
 import java.util.Scanner;
 
 /**
+ * bilibili 2019面试题：反转链表
+ * 题目：
+ * 		用户输入一行数据并以逗号分隔，先将数据存储到链表中，并以一定的规律翻转输出
+ * 		如：输入1, 2, 3, 4, 5			输出1, 5, 2, 4, 3(a1, an, a2, an-1...)
  * @author 李创博
- * @version: 1.0
+ * @version: 1.2
  */
 public class Main{
     public static void main(String []args){   
-    	// 1,2,3,4,5
     	/** 
+    	 * 解决思路：
+    	 * 	循环翻转，每次减少一个节点
+    	 * 1,2,3,4,5
     	 * 1,5,4,3,2
     	 * 1,5,2,3,4
     	 * 1,5,2,4,3
     	 */
-//    	Scanner sc = new Scanner(System.in);
-//    	String str = sc.nextLine();
-    	String str = "1,2,3,4,5";
+//    	String str = "1,2,3,4,5";//测试数据
+    	Scanner sc = new Scanner(System.in);
+    	String str = sc.nextLine();
     	String []num = str.split(",");
     	ListNode node = pushNode(num);
 
+    	//注意：不能再次使用node，引用型变量会操作同一个链表
     	ListNode resNode = pushNode(num);
     	resNode.next = null;
     	
     	ListNode result = calcResult(node, resNode);
-    	
-//    	ListNode.showNode(result);
+    	ListNode.showNode(result);
     }
     
-    //利用传递过来的链表，计算结果
+    //利用传递过来的链表，计算结果.node原链表，resNode链表用来组合结果
     public static ListNode calcResult(ListNode node, ListNode resNode) {
     	ListNode cur = resNode;
     	ListNode tempNode = null;
@@ -42,17 +48,15 @@ public class Main{
     		//将反转后的链表首元素取出，接着存储并用cur指针进行链接
     		tempNode = new ListNode(revNode.val);
     		cur.next = tempNode;
-    		ListNode.showNode(cur);
     		cur = cur.next;
-    		//重置node，使它进行下一次翻转g
+    		//重置node，使它进行下一次翻转
     		node = revNode;
     	}
     	//收尾工作，处理最后一次剩下的节点
     	tempNode = new ListNode(node.next.val);
-//    	tempNode.next = null;
+    	tempNode.next = null;
     	cur.next = tempNode;
-    	ListNode.showNode(cur);
-    	return cur;
+    	return resNode;
     }
     
     //将从node节点开始之后的节点全部反转
