@@ -13,21 +13,15 @@ import java.sql.Statement;
 /**
  * 在数据库中添加、删除和修改数据(DML操作)
  * @author 李创博
- * @version: 1.0
+ * @version: 1.1
  */
 public class ExecuteDML {
 	//往数据库中添加数据
 	public static void insertData() {
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e) {
-			System.out.println(e);
-		}
-		String url = "jdbc:mysql://127.0.0.1:3306/test";
 		Connection conn = null;
 		Statement st = null;
 		try {
-			conn = DriverManager.getConnection(url, "root", "root");
+			conn = JDBCutil.getConnection();
 			st = conn.createStatement();
 			String sql = "INSERT INTO student VALUES(104, '小华', '男',  '1992-07-18')";
 			int count = st.executeUpdate(sql);
@@ -35,35 +29,16 @@ public class ExecuteDML {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			if (st != null) {
-				try {
-					st.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			JDBCutil.close(conn, st);
 		}
 	}
 	
 	//删除数据库中数据
 	public static void deleteData() {
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e) {
-			System.out.println(e);
-		}
-		String url = "jdbc:mysql://127.0.0.1:3306/test";
 		Connection conn = null;
 		Statement st = null;
 		try {
-			conn = DriverManager.getConnection(url, "root", "root");
+			conn = JDBCutil.getConnection();
 			st = conn.createStatement();
 			String sql = "DELETE FROM student WHERE sex = '女'";
 			int count = st.executeUpdate(sql);
@@ -71,35 +46,16 @@ public class ExecuteDML {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			if (st != null) {
-				try {
-					st.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			JDBCutil.close(conn, st);
 		}
 	}
 	
 	//演示更新数据库中数据
 	public static void updateData() {
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e) {
-			System.out.println(e);
-		}
-		String url = "jdbc:mysql://127.0.0.1:3306/test";
 		Connection conn = null;
 		Statement st = null;
 		try {
-			conn = DriverManager.getConnection(url, "root", "root");
+			conn = JDBCutil.getConnection();
 			st = conn.createStatement();
 			String sql = "UPDATE student SET sex = '女' WHERE name = '小华'";
 			int count = st.executeUpdate(sql);
@@ -107,20 +63,7 @@ public class ExecuteDML {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			if (st != null) {
-				try {
-					st.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			JDBCutil.close(conn, st);
 		}
 	}
 	
@@ -129,7 +72,7 @@ public class ExecuteDML {
 //		insertData();
 		
 		//DML-delete
-//		deleteData();
+		deleteData();
 		
 		//DML-update
 //		updateData();

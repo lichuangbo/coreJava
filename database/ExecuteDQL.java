@@ -16,7 +16,7 @@ import java.util.Scanner;
 /**
  * 在数据库中查找数据(DQL),解决SQL注入问题
  * @author 李创博
- * @version: 1.2
+ * @version: 1.3
  */
 public class ExecuteDQL {
 	public static void main(String[] args) {
@@ -36,18 +36,12 @@ public class ExecuteDQL {
 		 * 		2.安全性高，没有SQL注入风险
 		 * 		3.没有SQL字符串拼接，可读性好
 		 */
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e) {
-			System.out.println(e);
-		}
-		String url = "jdbc:mysql://127.0.0.1:3306/test";
 		Connection conn = null;
 		Statement st = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
-			conn = DriverManager.getConnection(url, "root", "root");
+			conn = JDBCutil.getConnection();
 			st = conn.createStatement();
 			/**
 			 * 使用PreparedStatement接口时
@@ -69,34 +63,7 @@ public class ExecuteDQL {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (st != null) {
-				try {
-					st.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
+			JDBCutil.close(conn, st, rs, ps);
 		}
 	}
 }
