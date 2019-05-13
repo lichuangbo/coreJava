@@ -7,16 +7,16 @@ package cn.edu.tit.corejava.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Date;
 import java.util.Scanner;
 
 /**
- * 在数据库中查找数据(DQL)
+ * 在数据库中查找数据(DQL),解决SQL注入问题
  * @author 李创博
- * @version: 1.1
+ * @version: 1.2
  */
 public class ExecuteDQL {
 	public static void main(String[] args) {
@@ -25,23 +25,16 @@ public class ExecuteDQL {
 		  String name = sc.nextLine();         
 		  System.out.println("请输入性别：");         
 		  String sex = sc.nextLine();  
-//		  queryStudentData(name, sex);//正常输入：小华， 女
-		  
-		  /**
-		   * SQL注入: 用户输入的内容改变了原有SQL的用意
-		   * 	所以不可以让用户输入的和SQL语句进行简单的字符串拼接**
-		   * 解决方案：
-		   * 	使用PreParedStatement接口，它采用预编译的方法保证了安全性并且提高了一定的效率
-		   */
-		  queryStudentData(name, sex);//非法输入：小华, 女' or '1'='1
+		  queryStudentData(name, sex);
 	}
 	
+	//使用PreparedStatement解决SQL注入
 	public static void queryStudentData(String name, String sex) {
 		/**
-		 * ResultSet接口：
-		 * 		封装数据库查询的结果集，对结果集进行遍历，取出每一条记录
-		 * 	boolean next();指针每次向下移动一行
-		 * 		判断当前指向的记录是否有下一条记录，有返回true,否则false
+		 * PreparedStatement时Statement接口的子接口
+		 * 		1.它会先将SQL语句发送给数据库进行预编译，对于相似的操作语句，他只需要预编译一次，减少编译次数
+		 * 		2.安全性高，没有SQL注入风险
+		 * 		3.没有SQL字符串拼接，可读性好
 		 */
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
@@ -51,20 +44,27 @@ public class ExecuteDQL {
 		String url = "jdbc:mysql://127.0.0.1:3306/test";
 		Connection conn = null;
 		Statement st = null;
+		PreparedStatement ps = null;
 		ResultSet rs = null;
 		try {
 			conn = DriverManager.getConnection(url, "root", "root");
 			st = conn.createStatement();
-			String sql = "SELECT * FROM student WHERE name = '" + name
-					+ "' AND sex = '" + sex + "'";
-			rs = st.executeQuery(sql);
-			while(rs.next()) {
-				//利用ResultSet的get方法(列名/列号)获得表中属性值
-				int id = rs.getInt("id");
-				String n = rs.getString(2);
-				String s = rs.getString("sex");
-				Date birthday = rs.getDate("birthday");
-				System.out.println(id + n + s + birthday);
+			/**
+			 * 使用PreparedStatement接口时
+			 * 	  1.SQL中未知内容使用?代替
+			 * 	  2.在获取PreparedStatement对象时即传入SQL(预编译过程)
+			 * 	  3.使用setString( , )给?设置具体的值
+			 * 	  4.接着使用ResultSet接收查询结果
+			 */
+			String sql = "SELECT * FROM student WHERE name = ? and sex = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, name);
+			ps.setString(2, sex);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				System.out.println("学生存在");
+			}else {
+				System.out.println("您查找的学生不存在！");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -74,6 +74,13 @@ public class ExecuteDQL {
 					rs.close();
 				} catch (SQLException e1) {
 					e1.printStackTrace();
+				}
+			}
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
 				}
 			}
 			if (st != null) {
