@@ -1,0 +1,76 @@
+/**
+ * CopyRight © 2019All rights reserved.
+ * 
+ * @date: 2019年5月13日
+ */
+package cn.edu.tit.corejava.database;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Date;
+
+/**
+ * 在数据库中查找数据(DQL)
+ * @author 李创博
+ * @version: 1.0
+ */
+public class ExecuteDQL {
+	public static void main(String[] args) {
+		/**
+		 * ResultSet接口：
+		 * 		封装数据库查询的结果集，对结果集进行遍历，取出每一条记录
+		 * 	boolean next();指针每次向下移动一行
+		 * 		判断当前指向的记录是否有下一条记录，有返回true,否则false
+		 */
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			System.out.println(e);
+		}
+		String url = "jdbc:mysql://127.0.0.1:3306/test";
+		Connection conn = null;
+		Statement st = null;
+		ResultSet rs = null;
+		try {
+			conn = DriverManager.getConnection(url, "root", "root");
+			st = conn.createStatement();
+//			rs = st.executeQuery("SELECT * FROM student");//表中全部数据
+//			rs = st.executeQuery("SELECT * FROM student WHERE name = '小华' AND sex = '女'");//条件查询
+			while(rs.next()) {
+				//利用ResultSet的get方法(列名/列号)获得表中属性值
+				int id = rs.getInt("id");
+				String name = rs.getString(2);
+				String sex = rs.getString("sex");
+				Date birthday = rs.getDate("birthday");
+				System.out.println(id + name + sex + birthday);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+			if (st != null) {
+				try {
+					st.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+}
