@@ -19,6 +19,7 @@ import java.sql.Statement;
  * @version: 1.0
  */
 public class JDBCutil {
+	//定义常量user,password,url,driver
 	private static final String USER = "root";
 	private static final String PWD = "root";
 	private static final String URL = "jdbc:mysql://127.0.0.1:3306/test";
@@ -32,6 +33,12 @@ public class JDBCutil {
 		}
 	}
 	
+	/**
+	 * 连接数据库操作
+	 * @return 数据库连接对象
+	 * @throws SQLException
+	 * @return: Connection
+	 */
 	public static Connection getConnection() throws SQLException {
 		return DriverManager.getConnection(URL, USER, PWD);
 	}
@@ -76,23 +83,4 @@ public class JDBCutil {
 		}
 		close(conn, st);
 	}
-	
-	/**
-	 * 释放打开的资源
-	 * @param conn Connection
-	 * @param st Connection
-	 * @param rs ResultSet
-	 * @param ps PreparedStatement
-	 * @return: void
-	 */
-	public static void close(Connection conn, Statement st, ResultSet rs, PreparedStatement ps) {
-		if (ps != null) {
-			try {
-				ps.close();
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-		}
-		close(conn, st, rs);
-	} 
 }
