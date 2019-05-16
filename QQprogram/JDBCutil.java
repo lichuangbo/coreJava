@@ -5,6 +5,9 @@
  */
 package QQ;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -12,26 +15,46 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-
 /**
  * JDBC工具类, 封装有关数据库操作的方法
  * @author 李创博
  * @version: 1.0
  */
 public class JDBCutil {
-	//定义常量user,password,url,driver
-	private static final String USER = "root";
-	private static final String PWD = "root";
-	private static final String URL = "jdbc:mysql://127.0.0.1:3306/qq";
-	private static final String DRIVER = "com.mysql.jdbc.Driver";
+	private static String user;
+	private static String pwd;
+	private static String url;
+	private static String driver;
 	
+	//加载数据库配置文件
 	static {
+		FileReader fr = null;
+		BufferedReader br = null;
 		try {
-			Class.forName(DRIVER);
+			fr = new FileReader("C:\\EclipseWorkspace\\CoreJava\\src\\QQ\\database.txt");
+			br = new BufferedReader(fr);
+			driver = br.readLine();
+			url = br.readLine();
+			user = br.readLine();
+			pwd = br.readLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		try {
+			Class.forName(driver);
 		} catch (ClassNotFoundException e) {
 			System.out.println(e);
-		}
-	}
+		}	
+	}	
 	
 	/**
 	 * 连接数据库操作
@@ -40,7 +63,7 @@ public class JDBCutil {
 	 * @return: Connection
 	 */
 	public static Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(URL, USER, PWD);
+		return DriverManager.getConnection(url, user, pwd);
 	}
 	
 	/**
