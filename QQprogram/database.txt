@@ -1,3 +1,8 @@
+oracle.jdbc.driver.OracleDriver
+jdbc:oracle:thin:@127.0.0.1:1521:orcl
+lichuangbo
+lichuangbo
+
 com.mysql.jdbc.Driver
 jdbc:mysql://127.0.0.1:3306/qq
 root
