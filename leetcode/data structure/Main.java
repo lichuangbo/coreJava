@@ -13,7 +13,7 @@ import java.util.Scanner;
  * 		用户输入一行数据并以逗号分隔，先将数据存储到链表中，并以一定的规律翻转输出
  * 		如：输入1, 2, 3, 4, 5			输出1, 5, 2, 4, 3(a1, an, a2, an-1...)
  * @author 李创博
- * @version: 1.2
+ * @version: 1.3
  */
 public class Main{
     public static void main(String []args){   
@@ -25,13 +25,12 @@ public class Main{
     	 * 1,5,2,3,4
     	 * 1,5,2,4,3
     	 */
-//    	String str = "1,2,3,4,5";//测试数据
+//    	String str = "";//测试数据
     	Scanner sc = new Scanner(System.in);
     	String str = sc.nextLine();
     	String []num = str.split(",");
     	ListNode node = pushNode(num);
-
-    	//注意：不能再次使用node，引用型变量会操作同一个链表
+//    	//注意：不能再次使用node，引用型变量会操作同一个链表
     	ListNode resNode = pushNode(num);
     	resNode.next = null;
     	
@@ -39,8 +38,11 @@ public class Main{
     	ListNode.showNode(result);
     }
     
-    //利用传递过来的链表，计算结果.node原链表，resNode链表用来组合结果
-    public static ListNode calcResult(ListNode node, ListNode resNode) {
+    //利用传递过来的链表，计算结果node原链表，resNode链表用来组合结果
+    public static ListNode calcResult(ListNode node, ListNode resNode) {  	
+    	if (node.next == null) {
+			return node;
+		}
     	ListNode cur = resNode;
     	ListNode tempNode = null;
     	while(node.next.next != null) {
@@ -67,6 +69,9 @@ public class Main{
     	 * 2,3,4
     	 * 4,3
     	 */
+    	if (node.next == null) {
+			return node;
+		}
     	ListNode prev = node;
 	    ListNode cur = prev.next;
 	    ListNode tempNode = cur.next;
@@ -89,6 +94,13 @@ public class Main{
     public static ListNode pushNode(String []num) {
     	ListNode node0 = new ListNode(num[0]);
     	ListNode node1 = null;
+    	if (num.length == 0) {//数组为空
+    		return node1;
+    	}
+    	if (num.length == 1) {//数组只有一个元素
+			node0.next = node1;
+			return node0;
+		}
     	ListNode curNode = node0;
     	for (int i = 1; i < num.length; i++) {
 			node1 = new ListNode(num[i]);
@@ -103,10 +115,12 @@ public class Main{
 class ListNode {
 	String val;
 	ListNode next;
+	//构造方法，用来创建链表节点
 	ListNode(String x) { 
 		val = x; 
 	}
 	
+	//遍历打印链表
 	public static void showNode(ListNode node) {
 		while(node.next != null) {
 			System.out.print(node.val + ",");
