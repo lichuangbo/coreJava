@@ -10,13 +10,9 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.io.IOException;
+import java.net.Socket;
 
-import javax.sql.rowset.JdbcRowSet;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -28,7 +24,8 @@ import javax.swing.JTextField;
 /**
  * QQ登录窗口，连接数据库进行验证
  * @author 李创博
- * @version: 1.0
+ * @version: 1.1
+ * @since 2019年5月18日
  */
 public class QQLogin extends JFrame implements ActionListener {
 	JTextField tfUser=new JTextField();
@@ -72,20 +69,33 @@ public class QQLogin extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		String user = tfUser.getText().trim();
 		String pass = String.valueOf(tfPass.getPassword()).trim();
+		
+		Socket socket;
+		NetUtil nu = null;
+		try {
+			socket = new Socket("127.0.0.1", 8001);
+			nu = new NetUtil(socket);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}						
+		
+		//将类型、用户名和密码发送服务器，服务器端进行验证并返回结果，之后客户端根据结果显示
 		if(e.getActionCommand().equals("登录")) {
-			if (JDBCutil.isSearched(user, pass)) {
-				System.out.println("登录成功！");
-			} else {
+			nu.post("登录," + user + "," + pass);				
+			if (nu.get().equals("ok")) {
+				QQMain qm = new QQMain();
+				qm.setVisible(true);
+				this.setVisible(false);
+			}else {
 				JOptionPane.showMessageDialog(this, "您输入的用户名或密码有误！");
 			}
 		} else if (e.getActionCommand().equals("注册")) {
-			//注册前先查看用户名是否存在，是弹窗告知，否则进行注册
-			if (JDBCutil.isSearched(user)) {
+			nu.post("注册," + user + "," + pass);
+			String result = nu.get();
+			if (result.equals("error")) {
 				JOptionPane.showMessageDialog(this, "您输入的用户名已存在！");
 			} else {
-				if (JDBCutil.isInsert(user, pass)) {
-					JOptionPane.showMessageDialog(this, "注册成功");
-				}
+				JOptionPane.showMessageDialog(this, "注册成功");
 			}
 		} else {
 			tfUser.setText("");
