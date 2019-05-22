@@ -24,8 +24,8 @@ import javax.swing.JTextField;
 /**
  * QQ登录窗口，连接数据库进行验证
  * @author 李创博
- * @version: 1.1
- * @since 2019年5月18日
+ * @version: 1.2
+ * @date 2019/5/22
  */
 public class QQLogin extends JFrame implements ActionListener {
 	JTextField tfUser=new JTextField();
@@ -70,8 +70,8 @@ public class QQLogin extends JFrame implements ActionListener {
 		String user = tfUser.getText().trim();
 		String pass = String.valueOf(tfPass.getPassword()).trim();
 		
-		Socket socket;
 		NetUtil nu = null;
+		Socket socket = null;
 		try {
 			socket = new Socket("127.0.0.1", 8001);
 			nu = new NetUtil(socket);
@@ -84,6 +84,7 @@ public class QQLogin extends JFrame implements ActionListener {
 			nu.post("登录," + user + "," + pass);				
 			if (nu.get().equals("ok")) {
 				QQMain qm = new QQMain();
+				qm.setSocket(socket);
 				qm.setVisible(true);
 				this.setVisible(false);
 			}else {
