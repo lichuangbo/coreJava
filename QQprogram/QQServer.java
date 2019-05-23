@@ -13,12 +13,12 @@ import java.util.HashMap;
 /**
  * 服务器端
  * @author 李创博
- * @version: 1.1
+ * @version: 1.2
  */
 public class QQServer {
 	/**
 	 * 实现用户之间的通信：
-	 * 		每一个用户登录都开启一个线程，对应着一个socket，
+	 * 		每一个用户登录都开启一个线程，对应着一个socket
 	 * 		客户端的消息先转发到服务器端，再由所在线程转发到目标用户的socket上
 	 */
 	static HashMap<String, Socket> hm = new HashMap<>();
@@ -63,7 +63,7 @@ public class QQServer {
 		if (type.equals("登录")) {
 			if(JDBCutil.isSearched(uname, pass)) {
 				nu.post("ok");				
-				//将本人的名字发送给其他用户
+				//将本用户的名字发送给其他用户
 				for (Socket ts : hm.values()) {
 					NetUtil nuList = new NetUtil(ts);
 					nuList.post("add%" + uname);
@@ -74,6 +74,7 @@ public class QQServer {
 				}
 				//一旦用户登录，就将用户名和对应socket存入集合中
 				hm.put(uname, s);
+				//接收客户端发送的消息
 				while(true) {
 					String mess = nu.get();
 					if (mess.equals("{exit}")) {
@@ -84,7 +85,11 @@ public class QQServer {
 						}
 						return;
 					} else {
-						System.out.println(mess);
+						String toUser = mess.split("%")[0];
+						String message = mess.split("%")[1];
+						Socket ts = hm.get(toUser);
+						NetUtil nuTo = new NetUtil(ts);
+						nuTo.post("mess%" + message);
 					}
 				}
 			}
