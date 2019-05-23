@@ -22,10 +22,10 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 /**
- * QQ登录窗口，连接数据库进行验证
+ * QQ登录窗口，与服务器进行交互，实现登录
  * @author 李创博
  * @version: 1.2
- * @date 2019/5/22
+ * @date 2019/5/23
  */
 public class QQLogin extends JFrame implements ActionListener {
 	JTextField tfUser=new JTextField();
@@ -85,6 +85,7 @@ public class QQLogin extends JFrame implements ActionListener {
 			if (nu.get().equals("ok")) {
 				QQMain qm = new QQMain();
 				qm.setSocket(socket);
+				qm.setCurUser(user);
 				qm.setVisible(true);
 				this.setVisible(false);
 			}else {
