@@ -14,8 +14,6 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 
@@ -27,7 +25,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-
 /**
  * QQ主界面
  * @author 李创博
@@ -37,12 +34,15 @@ public class QQMain  extends JFrame implements ActionListener, WindowListener, R
 	JTextField tfmess=new JTextField();	
 	JTextArea taContent=new JTextArea();
 	JComboBox cmbUser=new JComboBox();
-	NetUtil nu = null;
 	
 	//从QQLogin中将socket对象传递过来
 	private Socket s;
 	public void setSocket(Socket s) {
 		this.s = s;
+		/*
+		 * 使用QQMain创建对象时，调用构造方法，随即启动接收线程，而此时setSocket还没有开始工作
+		 * 为避免异常，在setSocket末尾启动
+		 */
 		Thread t = new Thread(this);
 		t.start();
 	}
@@ -68,6 +68,7 @@ public class QQMain  extends JFrame implements ActionListener, WindowListener, R
 		this.add(sp,BorderLayout.CENTER);
 		//添加时间监听
 		btSend.addActionListener(this);
+		this.addWindowListener(this);
 		this.setVisible(true);
 	}
 
@@ -83,10 +84,10 @@ public class QQMain  extends JFrame implements ActionListener, WindowListener, R
 				FileWriter fw = new FileWriter(chatFile, true);//追加模式
 				PrintWriter pw = new PrintWriter(fw);				
 				pw.println(mess);
-				
-				nu = new NetUtil(s);
-				nu.post(mess);
 				pw.close();
+				
+				NetUtil nu = new NetUtil(s);
+				nu.post(mess);
 			} catch(IOException e1) {
 				System.out.println(e1);
 			}
@@ -98,12 +99,16 @@ public class QQMain  extends JFrame implements ActionListener, WindowListener, R
 		QQMain qm = new QQMain();
 	}
 	
+	/**
+	 * 由于客户端接收是阻塞式操作(要么接收要么发送)，必须使用线程使他同步进行
+	 */
 	@Override
 	public void run() {
-		NetUtil nu1 = new NetUtil(s);
+		NetUtil nu = new NetUtil(s);
 		while(true) {
-			String type = nu1.get().split("%")[0];
-			String mess = nu1.get().split("%")[1];
+			String reply = nu.get();
+			String type = reply.split("%")[0];
+			String mess = reply.split("%")[1];
 			if (type.equals("add")) {
 				cmbUser.addItem(mess);
 			}
@@ -117,22 +122,14 @@ public class QQMain  extends JFrame implements ActionListener, WindowListener, R
 	public void windowOpened(WindowEvent e) {}
 
 	/**
-	 * 窗口关闭即用户下线，向服务器发送exit
+	 * 窗口关闭即用户下线，向服务器发送{exit}
 	 * @param e
 	 * @return: void
 	 */
 	@Override
 	public void windowClosing(WindowEvent e) {
-		OutputStream os;
-		try {
-			os = s.getOutputStream();
-			OutputStreamWriter osw = new OutputStreamWriter(os);
-			PrintWriter pw = new PrintWriter(osw, true); 
-			pw.println("{exit}");
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-//		nu.post("{exit}");
+		NetUtil nu = new NetUtil(s); 
+		nu.post("{exit}");
 		System.exit(0);
 	}
 

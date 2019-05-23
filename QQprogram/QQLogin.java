@@ -92,8 +92,7 @@ public class QQLogin extends JFrame implements ActionListener {
 			}
 		} else if (e.getActionCommand().equals("注册")) {
 			nu.post("注册," + user + "," + pass);
-			String result = nu.get();
-			if (result.equals("error")) {
+			if (nu.get().equals("error")) {
 				JOptionPane.showMessageDialog(this, "您输入的用户名已存在！");
 			} else {
 				JOptionPane.showMessageDialog(this, "注册成功");
@@ -103,6 +102,7 @@ public class QQLogin extends JFrame implements ActionListener {
 			tfPass.setText("");
 		}
 	}
+	
 	public static void main(String[] args) {
 		QQLogin ql=new QQLogin();
 	}

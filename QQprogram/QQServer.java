@@ -44,8 +44,7 @@ public class QQServer {
 	 * @return: void
 	 */
 	public static void loginOrRegin(Socket s){
-		NetUtil nu = new NetUtil(s);
-		
+		NetUtil nu = new NetUtil(s);		
 		String uandp = nu.get();
 		//使用try-catch语句处理密码为空情况
 		String type = "";
@@ -63,25 +62,30 @@ public class QQServer {
 		 */
 		if (type.equals("登录")) {
 			if(JDBCutil.isSearched(uname, pass)) {
-				nu.post("ok");
-				
+				nu.post("ok");				
 				//将本人的名字发送给其他用户
 				for (Socket ts : hm.values()) {
 					NetUtil nuList = new NetUtil(ts);
 					nuList.post("add%" + uname);
 				}
-				
 				//将其他用户名字发送给自己
 				for (String tu : hm.keySet()) {
 					nu.post("add%" + tu);
 				}
-				
-				//一旦用户登录，就将用户名和socket存入集合中
+				//一旦用户登录，就将用户名和对应socket存入集合中
 				hm.put(uname, s);
-				
 				while(true) {
-					
-					System.out.println(nu.get());
+					String mess = nu.get();
+					if (mess.equals("{exit}")) {
+						hm.remove(uname);
+						for (Socket ts : hm.values()) {
+							NetUtil nuList = new NetUtil(ts);
+							nuList.post("exit%" + uname);
+						}
+						return;
+					} else {
+						System.out.println(mess);
+					}
 				}
 			}
 		} else {
