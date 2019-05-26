@@ -44,7 +44,7 @@ public class QQServer {
 	 * @return: void
 	 */
 	public static void loginOrRegin(Socket s){
-		NetUtil nu = new NetUtil(s);		
+		NetUtil nu = new NetUtil(s);
 		String uandp = nu.get();
 		//使用try-catch语句处理密码为空情况
 		String type = "";
@@ -57,34 +57,37 @@ public class QQServer {
 		} catch (Exception e) {}
 		
 		/*
-		 * 如果是登录，检查用户名密码是否存在，存在发送ok；
+		 * 如果是登录，检查用户名密码是否存在，存在发送ok，否则发送error；
 		 * 否则(即注册)，先检查用户名是否存在，存在发送error；不存在且插入数据库成功发送ok
 		 */
 		if (type.equals("登录")) {
 			if(JDBCutil.isSearched(uname, pass)) {
-				nu.post("ok");				
-				//将本用户的名字发送给其他用户
+				nu.post("ok");	
+				
+				//每一个socket都将此用户添加到好友列表中，通知所有用户上线
 				for (Socket ts : hm.values()) {
 					NetUtil nuList = new NetUtil(ts);
 					nuList.post("add%" + uname);
 				}
-				//将其他用户名字发送给自己
+				//当前用户添加所有socket用户
 				for (String tu : hm.keySet()) {
 					nu.post("add%" + tu);
 				}
-				//一旦用户登录，就将用户名和对应socket存入集合中
+				
+				//一旦当前用户成功登录，就将用户名和对应socket存入集合中
 				hm.put(uname, s);
-				//接收客户端发送的消息
+				
+				//监听当前QQMain客户端发送的消息(下线通知 / 消息)
 				while(true) {
 					String mess = nu.get();
-					if (mess.equals("{exit}")) {
+					if (mess.equals("{exit}")) {//用户下线，清除集合元素，通知所有用户下线
 						hm.remove(uname);
 						for (Socket ts : hm.values()) {
 							NetUtil nuList = new NetUtil(ts);
 							nuList.post("exit%" + uname);
 						}
 						return;
-					} else {
+					} else {//给指定用户发送消息
 						String toUser = mess.split("%")[0];
 						String message = mess.split("%")[1];
 						Socket ts = hm.get(toUser);
@@ -92,6 +95,8 @@ public class QQServer {
 						nuTo.post("mess%" + message);
 					}
 				}
+			} else {
+				nu.post("error");
 			}
 		} else {
 			if (JDBCutil.isSearched(uname)) {

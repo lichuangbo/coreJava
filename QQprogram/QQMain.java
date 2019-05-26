@@ -56,20 +56,6 @@ public class QQMain  extends JFrame implements ActionListener, WindowListener, R
 	private String curUser;
 	public void setCurUser(String curUser) {
 		this.curUser = curUser;
-		//加载聊天记录
-		try {
-			String filename = "D:\\QQChatFiles\\" + curUser +".txt";
-			File file = new File(filename);
-			if (file.exists()) {
-				FileReader fr = new FileReader(file);
-				BufferedReader br = new BufferedReader(fr);
-				while(br.ready()) {
-					taContent.append(br.readLine() + "\n");
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	public QQMain() {
@@ -93,6 +79,7 @@ public class QQMain  extends JFrame implements ActionListener, WindowListener, R
 		this.add(sp,BorderLayout.CENTER);
 		//添加时间监听
 		btSend.addActionListener(this);
+		cmbUser.addActionListener(this);
 		this.addWindowListener(this);
 		this.setVisible(true);
 	}
@@ -107,6 +94,14 @@ public class QQMain  extends JFrame implements ActionListener, WindowListener, R
 				taContent.append(mess + "\n");
 				nu.post(cmbUser.getSelectedItem() + "%" + mess);
 				tfmess.setText("");
+			}
+		}
+//		选中哪个用户加载和他的聊天记录
+		if (e.getSource() == cmbUser) {
+			taContent.setText("");
+			if (cmbUser.getSelectedItem() != null) {
+				String uname = cmbUser.getSelectedItem().toString();
+				loadChatFile(uname);
 			}
 		}
 	}
@@ -150,7 +145,7 @@ public class QQMain  extends JFrame implements ActionListener, WindowListener, R
 			if (!filePath.exists()) {
 				filePath.mkdir();
 			}
-			String fileName = curUser + ".txt";
+			String fileName = curUser + "$" + cmbUser.getSelectedItem() + ".txt";
 			File chatFile = new File(filePath.getAbsolutePath() + "\\" + fileName);
 			if (!chatFile.exists()) {
 				chatFile.createNewFile();
@@ -167,6 +162,27 @@ public class QQMain  extends JFrame implements ActionListener, WindowListener, R
 		}
 	}
 
+	/**
+	 * 加载当前用户和选中的用户之间聊天记录
+	 * @param uname 选中的用户
+	 * @return: void
+	 */
+	public void loadChatFile(String uname) {
+		try {
+			String filename = "D:\\QQChatFiles\\" + curUser + "$" + uname + ".txt";
+			File file = new File(filename);
+			if (file.exists()) {
+				FileReader fr = new FileReader(file);
+				BufferedReader br = new BufferedReader(fr);
+				while (br.ready()) {
+					taContent.append(br.readLine() + "\n");
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	@Override
 	public void windowOpened(WindowEvent e) {}
 
